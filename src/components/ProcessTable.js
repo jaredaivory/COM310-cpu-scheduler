@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import '../styles/processtable.css';
 
@@ -38,7 +38,7 @@ const ProcessTable = ({ processdata }) => {
             </table>
             <div className="text-center">
                 <button
-                    className="btn btn-info"
+                    className="btn btn-info btn-add-process"
                     onClick={() => console.log(data)}
                 >
                     +
@@ -49,9 +49,12 @@ const ProcessTable = ({ processdata }) => {
 };
 
 const TableRow = ({ process, editProcess }) => {
+    //state management for the BurstTime and InsertTime input boxes
     const [bursttime, setBursttime] = useState(process.bursttime);
     const [insertion, setInsertion] = useState(process.insertion);
 
+    // Event handler for input changes to the input boxes.
+    // Needed to create a central point of truth or state in react projects.
     function handleChange(event) {
         switch (event.target.placeholder) {
             case 'Burst Time':
@@ -65,10 +68,20 @@ const TableRow = ({ process, editProcess }) => {
         }
     }
 
-    React.useEffect(() => {
-        console.log('stuff');
-    }, [process]);
+    //Function that is invoked whenever the variables defined in second argument, [arg1, arg2...] are altered.
+    useEffect(() => {
+        process['bursttime'] = parseInt(bursttime);
+        process['insertion'] = parseInt(insertion);
 
+        editProcess({
+            ...process,
+        });
+
+        // This eslint-disable is here because the linter is seeing a potential recursion error.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [bursttime, insertion]);
+
+    //Returns the stylized input elements in JSX
     function renderEditableValue(value, placeholder) {
         return (
             <div className="input-group">
@@ -88,11 +101,13 @@ const TableRow = ({ process, editProcess }) => {
         );
     }
 
+    // Randomizes the values within the input boxes.
     function randomizeValues() {
         setBursttime(Math.floor(Math.random() * 30));
         setInsertion(Math.floor(Math.random() * 30));
     }
 
+    //Returns the main JSX element that each row in the table will have.
     return (
         <tr key={process.id}>
             <td>Process {process.name}</td>
@@ -106,8 +121,8 @@ const TableRow = ({ process, editProcess }) => {
                     Randomize
                 </button>
             </td>
-            <td>
-                <button className="btn btn-danger btn-sm">x</button>
+            <td style={{ borderLeft: '1px solid grey' }}>
+                <button className="btn btn-danger">Delete</button>
             </td>
         </tr>
     );
