@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { randomColor, ALPHA } from '../utils/utils';
 
 import '../styles/processtable.css';
 
@@ -13,36 +14,53 @@ const ProcessTable = ({ processdata }) => {
         }
     }
 
+    function addProcess() {
+        let newProcess = {
+            id: `${data.length}`,
+            name: `${ALPHA[data.length]}`,
+            bursttime: 10,
+            insertion: 0,
+            color: `${randomColor()}`,
+        };
+        setData([...data, newProcess]);
+    }
+
     return (
         <div className="container">
-            <h5>Process Table</h5>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>Process Name</th>
-                        <th>Burst Time</th>
-                        <th>Insertion</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((process) => (
-                        <TableRow
-                            key={process.id}
-                            process={process}
-                            editProcess={editProcess}
-                        />
-                    ))}
-                </tbody>
-            </table>
-            <div className="text-center">
-                <button
-                    className="btn btn-info btn-add-process"
-                    onClick={() => console.log(data)}
-                >
-                    +
-                </button>
+            <div className="card shadow-lg">
+                <div className="card-header">Process Table</div>
+                <div className="card-body">
+                    <div id="process-table" className="table-responsive">
+                        <table className="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Process Name</th>
+                                    <th scope="col">Burst Time</th>
+                                    <th scope="col">Insertion</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody className="">
+                                {data.map((process) => (
+                                    <TableRow
+                                        key={process.id}
+                                        process={process}
+                                        editProcess={editProcess}
+                                    />
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="text-center">
+                        <button
+                            className="btn btn-info btn-add-process"
+                            onClick={addProcess}
+                        >
+                            +
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -110,19 +128,21 @@ const TableRow = ({ process, editProcess }) => {
     //Returns the main JSX element that each row in the table will have.
     return (
         <tr key={process.id}>
-            <td>Process {process.name}</td>
+            <td style={{ backgroundColor: `${process.color}` }}>
+                Process {process.name}
+            </td>
             <td>{renderEditableValue(bursttime, 'Burst Time')}</td>
             <td>{renderEditableValue(insertion, 'Insertion')}</td>
             <td>
-                <button
-                    className="btn btn-outline-info"
-                    onClick={randomizeValues}
-                >
-                    Randomize
-                </button>
-            </td>
-            <td style={{ borderLeft: '1px solid grey' }}>
-                <button className="btn btn-danger">Delete</button>
+                <div className="btn-group">
+                    <button
+                        className="btn btn-outline-info"
+                        onClick={randomizeValues}
+                    >
+                        Randomize
+                    </button>
+                    <button className="btn btn-danger">Delete</button>
+                </div>
             </td>
         </tr>
     );
