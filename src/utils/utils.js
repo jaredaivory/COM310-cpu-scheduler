@@ -6,4 +6,7 @@ function randomColor() {
     return 'rgb(' + x() + ',' + x() + ',' + x() + ')';
 }
 
+//fcfs process
+function firstComeFirstServe(processes) {}
+
 export { randomColor, ALPHA };

@@ -35,8 +35,8 @@ const ProcessTable = ({ processdata }) => {
                             <thead>
                                 <tr>
                                     <th scope="col">Process Name</th>
-                                    <th scope="col">Burst Time</th>
-                                    <th scope="col">Insertion</th>
+                                    <th scope="col-5">Burst Time</th>
+                                    <th scope="col-5">Insertion</th>
                                     <th></th>
                                 </tr>
                             </thead>

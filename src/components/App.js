@@ -3,6 +3,8 @@ import ProcessTable from './ProcessTable';
 import ButtonBar from './ButtonBar';
 
 import '../styles/app.css';
+import Footer from './Footer';
+import GanttChart from './GanttChart';
 
 const processdata = [
     { id: 0, name: 'A', bursttime: 10, insertion: 0, color: '#B30000' },
@@ -12,9 +14,13 @@ const processdata = [
 
 export default function App() {
     return (
-        <div id="app">
-            <ProcessTable processdata={processdata} />
-            <ButtonBar />
+        <div id="app container">
+            <div className="col">
+                <ProcessTable className="row" processdata={processdata} />
+                <ButtonBar className="row" />
+                <GanttChart className="row" />
+                <Footer className="row" />
+            </div>
         </div>
     );
 }
