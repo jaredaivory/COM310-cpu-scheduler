@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 
 import '../styles/processtable.css';
 
-const ProcessTable = ({ processdata: data, addProcess, editProcess }) => {
-    const [btnDisabled, setBtnDisabled] = useState(true);
-
+const ProcessTable = ({
+    processdata: data,
+    addProcess,
+    editProcess,
+    deleteProcess,
+}) => {
     return (
         <div className="container">
             <div className="card shadow-lg">
@@ -20,12 +23,13 @@ const ProcessTable = ({ processdata: data, addProcess, editProcess }) => {
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody className="">
+                            <tbody>
                                 {data.map((process) => (
                                     <TableRow
                                         key={process.id}
                                         process={process}
                                         editProcess={editProcess}
+                                        deleteProcess={deleteProcess}
                                     />
                                 ))}
                             </tbody>
@@ -48,7 +52,7 @@ const ProcessTable = ({ processdata: data, addProcess, editProcess }) => {
     );
 };
 
-const TableRow = ({ process, editProcess }) => {
+const TableRow = ({ process, editProcess, deleteProcess }) => {
     //state management for the BurstTime and InsertTime input boxes
     const [bursttime, setBursttime] = useState(process.bursttime);
     const [insertion, setInsertion] = useState(process.insertion);
@@ -89,6 +93,7 @@ const TableRow = ({ process, editProcess }) => {
                     value={value}
                     type="number"
                     className="form-control"
+                    min="0"
                     placeholder={placeholder}
                     onChange={(e) => handleChange(e)}
                 />
@@ -103,8 +108,8 @@ const TableRow = ({ process, editProcess }) => {
 
     // Randomizes the values within the input boxes.
     function randomizeValues() {
-        setBursttime(Math.floor(Math.random() * 30));
-        setInsertion(Math.floor(Math.random() * 30));
+        setBursttime(Math.floor(Math.random() * 40));
+        setInsertion(Math.floor(Math.random() * 40));
     }
 
     //Returns the main JSX element that each row in the table will have.
@@ -123,7 +128,12 @@ const TableRow = ({ process, editProcess }) => {
                     >
                         Randomize
                     </button>
-                    <button className="btn btn-danger">Delete</button>
+                    <button
+                        className="btn btn-danger"
+                        onClick={() => deleteProcess(process)}
+                    >
+                        Delete
+                    </button>
                 </div>
             </td>
         </tr>

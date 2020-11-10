@@ -6,27 +6,28 @@ import '../styles/app.css';
 import Footer from './Footer';
 import GanttChart from './GanttChart';
 import Algorithms from '../utils/algorithms';
-import { randomColor, ALPHA } from '../utils/utils';
+import { DEFAULT_PROCESSES } from '../utils/utils';
 
-const processdata = [
-    { id: 0, name: 'A', bursttime: 10, insertion: 0, color: '#B30000' },
-    { id: 1, name: 'B', bursttime: 15, insertion: 5, color: '#009DFF' },
-    { id: 2, name: 'C', bursttime: 30, insertion: 3, color: '#FFFC33' },
-];
+const processdata = DEFAULT_PROCESSES.slice(0, 3);
+const newProcessStack = DEFAULT_PROCESSES.slice(3);
 
 export default function App() {
     const [data, setData] = useState(processdata);
     const [algorithm, setAlgorithm] = useState(Algorithms.FirstComeFirstServe);
 
     function addProcess() {
-        let newProcess = {
-            id: data.length,
-            name: `${ALPHA[data.length]}`,
-            bursttime: 10,
-            insertion: 0,
-            color: `${randomColor()}`,
-        };
-        setData([...data, newProcess]);
+        // Old New Process function that allowed for any amount of processes
+        // let newProcess = {
+        //     id: data.length,
+        //     name: `${ALPHA[data.length]}`,
+        //     bursttime: 10,
+        //     insertion: 0,
+        //     color: `${randomColor()}`,
+        // };
+        // setData([...data, newProcess]);
+        let p = newProcessStack.shift();
+        console.log(p);
+        setData([...data, p]);
     }
     function editProcess(process) {
         let index = data.findIndex((p) => p.id === process.id);
@@ -34,6 +35,12 @@ export default function App() {
             data[index] = process;
             setData([...data]);
         }
+    }
+
+    function deleteProcess(process) {
+        newProcessStack.push(process);
+        newProcessStack.sort((p0, p1) => (p0.id > p1 ? 1 : -1));
+        setData(data.filter((p) => p.id !== process.id));
     }
 
     function handleAlgorithmChange(algorithm) {
@@ -48,6 +55,7 @@ export default function App() {
                     processdata={data}
                     addProcess={addProcess}
                     editProcess={editProcess}
+                    deleteProcess={deleteProcess}
                 />
                 <ButtonBar
                     className="row"

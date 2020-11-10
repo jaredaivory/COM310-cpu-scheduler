@@ -41,7 +41,7 @@ function renderGanttChart(ganttChart) {
 function GanttChartNode(node) {
     const { process } = node;
     return (
-        <div className="col" key={process.id}>
+        <div className="col-sm-2" key={process.id}>
             <div className="ganttchart-node">
                 <div key={process.id}>
                     <div
