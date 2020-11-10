@@ -6,9 +6,11 @@ let mainWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
+        minWidth: 768,
         width: 800,
         height: 600,
         show: false,
+        useContentSize: true,
     });
     const startURL = isDev
         ? 'http://localhost:3000'

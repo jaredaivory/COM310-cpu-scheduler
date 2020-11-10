@@ -1,29 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { randomColor, ALPHA } from '../utils/utils';
 
 import '../styles/processtable.css';
 
-const ProcessTable = ({ processdata }) => {
-    const [data, setData] = useState(processdata);
-
-    function editProcess(process) {
-        let index = data.findIndex((p) => p.id === process.id);
-        if (index !== -1) {
-            data[index] = process;
-            setData([...data]);
-        }
-    }
-
-    function addProcess() {
-        let newProcess = {
-            id: `${data.length}`,
-            name: `${ALPHA[data.length]}`,
-            bursttime: 10,
-            insertion: 0,
-            color: `${randomColor()}`,
-        };
-        setData([...data, newProcess]);
-    }
+const ProcessTable = ({ processdata: data, addProcess, editProcess }) => {
+    const [btnDisabled, setBtnDisabled] = useState(true);
 
     return (
         <div className="container">
@@ -51,11 +31,13 @@ const ProcessTable = ({ processdata }) => {
                             </tbody>
                         </table>
                     </div>
-
                     <div className="text-center">
                         <button
-                            className="btn btn-info btn-add-process"
+                            className={`btn btn-info btn-add-process ${
+                                data.length === 10 ? 'bg-dark' : ''
+                            }`}
                             onClick={addProcess}
+                            disabled={data.length === 10 ? true : false}
                         >
                             +
                         </button>

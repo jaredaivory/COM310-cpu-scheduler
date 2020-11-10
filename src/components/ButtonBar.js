@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
+import { FirstComeFirstServe, ShortestJobFirst } from '../utils/algorithms';
 
 import '../styles/buttonbar.css';
 
-export default function ButtonBar() {
-    const buttonOptions = [
-        { id: 'fcfs', label: 'First Come First Serve' },
-        { id: 'sjf', label: 'Shortest Job First' },
-    ];
+export default function ButtonBar({ handleAlgorithmChange }) {
+    const buttonOptions = [{ ...FirstComeFirstServe }, { ...ShortestJobFirst }];
     const [selected, setSelected] = useState(buttonOptions[0].id);
 
     const renderRadioButton = (options) => {
@@ -20,8 +18,8 @@ export default function ButtonBar() {
                     checked={options.id === selected ? true : false}
                     onChange={handleSelection}
                 ></input>
-                <label className="form-check-label" for={options.id}>
-                    {options.label}
+                <label className="form-check-label" htmlFor={options.id}>
+                    {options.name}
                 </label>
             </div>
         );
@@ -29,6 +27,17 @@ export default function ButtonBar() {
 
     const handleSelection = (e) => {
         setSelected(e.target.id);
+
+        switch (e.target.id) {
+            case FirstComeFirstServe.id:
+                handleAlgorithmChange(FirstComeFirstServe);
+                break;
+            case ShortestJobFirst.id:
+                handleAlgorithmChange(ShortestJobFirst);
+                break;
+            default:
+                break;
+        }
     };
 
     return (
@@ -36,9 +45,6 @@ export default function ButtonBar() {
             <div className="text-center">
                 {buttonOptions.map(renderRadioButton)}
             </div>
-            <button type="button" class="btn btn-info btn-lg btn-block">
-                Calculate
-            </button>
         </div>
     );
 }
