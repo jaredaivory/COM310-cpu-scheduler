@@ -115,8 +115,8 @@ const TableRow = ({ process, editProcess, removeProcess }) => {
 
     // Randomizes the values within the input boxes.
     function randomizeValues() {
-        setBursttime(Math.floor(Math.random() * 40));
-        setInsertion(Math.floor(Math.random() * 40));
+        setBursttime(Math.floor(Math.random() * 50));
+        setInsertion(Math.floor(Math.random() * 50));
     }
 
     //Returns the main JSX element that each row in the table will have.
