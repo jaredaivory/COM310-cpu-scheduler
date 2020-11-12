@@ -1,26 +1,45 @@
 import React, { useState, useEffect } from 'react';
 
-export default function GanttChart({ processdata, algorithm }) {
-    const [ganttChart, setGanttChart] = useState(
-        algorithm.generateGanttChart(processdata)
-    );
+/*  GanttChart Component
+        Renders the Gantt Chart
+*/
 
+export default function GanttChart({ processdata, algorithm }) {
+    const [ganttChart, setGanttChart] = useState([]);
+
+    // useEffect is triggered whenever there is a change in the arguments passed ()=> {function..., [arg0, arg1]}.
+    // used for responsiveness whenever the processdata array is changed.
     useEffect(() => {
+        console.log(algorithm);
         setGanttChart(algorithm.generateGanttChart(processdata));
     }, [processdata, algorithm]);
 
+    // Returns the rendered JSX
     return (
         <div className="container">
             <div className="card">
                 <div className="card-header">
                     Gantt Chart <strong>{algorithm.name}</strong>
                 </div>
-                <div className="card-body">{renderGanttChart(ganttChart)}</div>
+                <div className="card-body">
+                    {renderGanttChart(ganttChart)}
+                    <div className="row justify-content-center">
+                        <div className="col-md-4">
+                            Average Wait Time:
+                            {}
+                        </div>
+                        <div className="col-md-4">
+                            Average Turnover Time:
+                            {}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
 }
 
+// Return the container that the gantt chart will be inside in JSX
 function renderGanttChart(ganttChart) {
     if (ganttChart) {
         return (
@@ -38,6 +57,7 @@ function renderGanttChart(ganttChart) {
     }
 }
 
+// Returns the divs that the chart will you in its render method
 function GanttChartNode(node) {
     const { process } = node;
     return (

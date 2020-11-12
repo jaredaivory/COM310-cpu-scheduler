@@ -12,7 +12,7 @@ const DEFAULT_PROCESSES = [
     {
         id: 2,
         name: 'C',
-        bursttime: 30,
+        bursttime: 12,
         insertion: 6,
         color: 'rgb(255,255,103)',
     },

@@ -3,6 +3,11 @@ import { FirstComeFirstServe, ShortestJobFirst } from '../utils/algorithms';
 
 import '../styles/buttonbar.css';
 
+/*
+    ButtonBar Component:
+        Serves as location to select the prefered algorithm
+*/
+
 export default function ButtonBar({ handleAlgorithmChange }) {
     const buttonOptions = [{ ...FirstComeFirstServe }, { ...ShortestJobFirst }];
     const [selected, setSelected] = useState(buttonOptions[0].id);
