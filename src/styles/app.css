@@ -2,3 +2,16 @@ body {
     margin-top: 5%;
     background-color: #1d1d1d;
 }
+
+div .container {
+    margin-bottom: 30px;
+}
+
+.ganttchart-node {
+    border: 1px black solid;
+}
+
+.ganttchart {
+    padding-bottom: 20px;
+    overflow-x: scroll;
+}

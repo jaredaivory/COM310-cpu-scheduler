@@ -1,30 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { randomColor, ALPHA } from '../utils/utils';
 
 import '../styles/processtable.css';
 
-const ProcessTable = ({ processdata }) => {
-    const [data, setData] = useState(processdata);
+/*
+    Process Table Component
+        Renders the table that contains the editable processes
+*/
 
-    function editProcess(process) {
-        let index = data.findIndex((p) => p.id === process.id);
-        if (index !== -1) {
-            data[index] = process;
-            setData([...data]);
-        }
-    }
-
-    function addProcess() {
-        let newProcess = {
-            id: `${data.length}`,
-            name: `${ALPHA[data.length]}`,
-            bursttime: 10,
-            insertion: 0,
-            color: `${randomColor()}`,
-        };
-        setData([...data, newProcess]);
-    }
-
+export default function ProcessTable({
+    processdata: data,
+    addProcess,
+    editProcess,
+    removeProcess,
+}) {
+    // Returns the main JSX for the table
     return (
         <div className="container">
             <div className="card shadow-lg">
@@ -35,27 +24,30 @@ const ProcessTable = ({ processdata }) => {
                             <thead>
                                 <tr>
                                     <th scope="col">Process Name</th>
-                                    <th scope="col">Burst Time</th>
-                                    <th scope="col">Insertion</th>
+                                    <th scope="col-5">Burst Time</th>
+                                    <th scope="col-5">Insertion</th>
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody className="">
+                            <tbody>
                                 {data.map((process) => (
                                     <TableRow
                                         key={process.id}
                                         process={process}
                                         editProcess={editProcess}
+                                        removeProcess={removeProcess}
                                     />
                                 ))}
                             </tbody>
                         </table>
                     </div>
-
                     <div className="text-center">
                         <button
-                            className="btn btn-info btn-add-process"
+                            className={`btn btn-info btn-add-process ${
+                                data.length === 10 ? 'bg-dark' : ''
+                            }`}
                             onClick={addProcess}
+                            disabled={data.length === 10 ? true : false}
                         >
                             +
                         </button>
@@ -64,9 +56,9 @@ const ProcessTable = ({ processdata }) => {
             </div>
         </div>
     );
-};
+}
 
-const TableRow = ({ process, editProcess }) => {
+const TableRow = ({ process, editProcess, removeProcess }) => {
     //state management for the BurstTime and InsertTime input boxes
     const [bursttime, setBursttime] = useState(process.bursttime);
     const [insertion, setInsertion] = useState(process.insertion);
@@ -86,7 +78,8 @@ const TableRow = ({ process, editProcess }) => {
         }
     }
 
-    //Function that is invoked whenever the variables defined in second argument, [arg1, arg2...] are altered.
+    // useEffect is triggered whenever there is a change in the arguments passed ()=> {function..., [arg0, arg1]}.
+    // used for responsiveneness whenever the bursttime or insertion time is changed
     useEffect(() => {
         process['bursttime'] = parseInt(bursttime);
         process['insertion'] = parseInt(insertion);
@@ -107,6 +100,7 @@ const TableRow = ({ process, editProcess }) => {
                     value={value}
                     type="number"
                     className="form-control"
+                    min="0"
                     placeholder={placeholder}
                     onChange={(e) => handleChange(e)}
                 />
@@ -121,8 +115,8 @@ const TableRow = ({ process, editProcess }) => {
 
     // Randomizes the values within the input boxes.
     function randomizeValues() {
-        setBursttime(Math.floor(Math.random() * 30));
-        setInsertion(Math.floor(Math.random() * 30));
+        setBursttime(Math.floor(Math.random() * 40));
+        setInsertion(Math.floor(Math.random() * 40));
     }
 
     //Returns the main JSX element that each row in the table will have.
@@ -141,11 +135,14 @@ const TableRow = ({ process, editProcess }) => {
                     >
                         Randomize
                     </button>
-                    <button className="btn btn-danger">Delete</button>
+                    <button
+                        className="btn btn-danger"
+                        onClick={() => removeProcess(process)}
+                    >
+                        Remove
+                    </button>
                 </div>
             </td>
         </tr>
     );
 };
-
-export default ProcessTable;
