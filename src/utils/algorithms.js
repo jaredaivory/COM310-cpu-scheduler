@@ -9,34 +9,33 @@ class CPUAlgorithm {
         this.processes = processes;
     }
 
+    setGanttChart(ganttchart) {
+        this.ganttChart = ganttchart;
+    }
+
     getWaitTimes() {
         const waittimes = [];
-
         const bursttimes = [];
-        for (let p in this.processes) {
-            bursttimes.push(p.bursttime);
+        for (let p in this.ganttChart) {
+            bursttimes.push(this.ganttChart[p].process.bursttime);
         }
 
-        const turnovertimes = this.getTurnoverTimes();
-        for (let i = 0; i < turnovertimes; i++) {
-            waittimes.push(turnovertimes[i] - bursttimes[i]);
+        const turnaroundtimes = this.getTurnaroundTimes();
+        for (let i = 0; i < turnaroundtimes.length; i++) {
+            waittimes.push(turnaroundtimes[i] - bursttimes[i]);
         }
         return waittimes;
     }
 
     getTurnaroundTimes() {
         const turnaroundtimes = [];
-        console.log(this.processes);
-        for (let p in this.processes) {
-            turnaroundtimes.push(p.end - p.start);
+        for (let p in this.ganttChart) {
+            turnaroundtimes.push(
+                this.ganttChart[p].end - this.ganttChart[p].process.insertion
+            );
         }
         return turnaroundtimes;
     }
-
-    something() {
-        console.log('hello');
-    }
-
     //Sort the processes by the their insertion times
     sortProcessesByInsertion(processes) {
         return [...processes].sort((p0, p1) =>
@@ -65,6 +64,7 @@ const FCFS_algorithm = function generateGanttChart(processes) {
         return { start, process, bursttime: process.bursttime, end };
     });
 
+    this.setGanttChart(ganttChart);
     return ganttChart;
 };
 const SJF_algorithm = function generateGanttChart(processes) {
@@ -113,6 +113,7 @@ const SJF_algorithm = function generateGanttChart(processes) {
         waitingQueue = this.sortProcessesByBurstTime(waitingQueue);
         i += currProcess.bursttime;
     }
+    this.setGanttChart(ganttChart);
     return ganttChart;
 };
 

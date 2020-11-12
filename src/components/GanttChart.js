@@ -10,9 +10,20 @@ export default function GanttChart({ processdata, algorithm }) {
     // useEffect is triggered whenever there is a change in the arguments passed ()=> {function..., [arg0, arg1]}.
     // used for responsiveness whenever the processdata array is changed.
     useEffect(() => {
-        console.log(algorithm);
         setGanttChart(algorithm.generateGanttChart(processdata));
     }, [processdata, algorithm]);
+
+    function getAverageTurnaroundTimes() {
+        let turnaroundtimes = algorithm.getTurnaroundTimes();
+        let total = turnaroundtimes.reduce((acc, t) => acc + t, 0);
+        return (total / turnaroundtimes.length).toFixed(2);
+    }
+
+    function getAverageWaitTimes() {
+        const waittimes = algorithm.getWaitTimes();
+        let total = algorithm.getWaitTimes().reduce((acc, w) => acc + w, 0);
+        return (total / waittimes.length).toFixed(2);
+    }
 
     // Returns the rendered JSX
     return (
@@ -25,12 +36,10 @@ export default function GanttChart({ processdata, algorithm }) {
                     {renderGanttChart(ganttChart)}
                     <div className="row justify-content-center">
                         <div className="col-md-4">
-                            Average Wait Time:
-                            {}
+                            Average Wait Time: {getAverageWaitTimes()}
                         </div>
                         <div className="col-md-4">
-                            Average Turnover Time:
-                            {}
+                            Average Turnover Time: {getAverageTurnaroundTimes()}
                         </div>
                     </div>
                 </div>
