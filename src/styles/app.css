@@ -11,9 +11,7 @@ div .container {
     border: 1px black solid;
 }
 
-.ganttchart-node div {
-}
-
 .ganttchart {
+    padding-bottom: 20px;
     overflow-x: scroll;
 }

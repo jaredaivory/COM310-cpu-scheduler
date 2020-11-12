@@ -4,58 +4,66 @@ import ButtonBar from './ButtonBar';
 
 import '../styles/app.css';
 import Footer from './Footer';
+import Header from './Header';
 import GanttChart from './GanttChart';
 import Algorithms from '../utils/algorithms';
 import { DEFAULT_PROCESSES } from '../utils/utils';
 
 const processdata = DEFAULT_PROCESSES.slice(0, 3);
-const newProcessStack = DEFAULT_PROCESSES.slice(3);
+const availableProcesses = DEFAULT_PROCESSES.slice(3);
+
+/*  
+    App Component:
+        The root component of the appliction
+*/
 
 export default function App() {
     const [data, setData] = useState(processdata);
     const [algorithm, setAlgorithm] = useState(Algorithms.FirstComeFirstServe);
 
+    // All of the function defined in this file are to be used by children components
+    // and are based through properties
     function addProcess() {
-        // Old New Process function that allowed for any amount of processes
-        // let newProcess = {
-        //     id: data.length,
-        //     name: `${ALPHA[data.length]}`,
-        //     bursttime: 10,
-        //     insertion: 0,
-        //     color: `${randomColor()}`,
-        // };
-        // setData([...data, newProcess]);
-        let p = newProcessStack.shift();
-        console.log(p);
-        setData([...data, p]);
+        // adds a process from the available processes stack
+        if (availableProcesses) setData([...data, availableProcesses.shift()]);
     }
-    function editProcess(process) {
-        let index = data.findIndex((p) => p.id === process.id);
+
+    function editProcess(editedprocess) {
+        // takes a edited process object, finds its index within processdata array and replaces it
+        let index = data.findIndex((p) => p.id === editedprocess.id);
         if (index !== -1) {
-            data[index] = process;
+            data[index] = editedprocess;
             setData([...data]);
         }
     }
 
-    function deleteProcess(process) {
-        newProcessStack.push(process);
-        newProcessStack.sort((p0, p1) => (p0.id > p1 ? 1 : -1));
-        setData(data.filter((p) => p.id !== process.id));
+    function removeProcess(process) {
+        // finds the index of a process and removes it within processdata array
+        let index = data.findIndex((p) => p.id === process.id);
+        if (index >= 0) {
+            availableProcesses.push(process);
+            availableProcesses.sort((p0, p1) => (p0.id > p1.id ? 1 : -1));
+            setData(data.filter((p) => p.id !== process.id));
+        } else {
+            console.error(`Error deleting process`, process);
+        }
     }
 
     function handleAlgorithmChange(algorithm) {
         setAlgorithm(algorithm);
     }
 
+    // Returns the rendered JSX
     return (
         <div id="app container">
             <div className="col">
+                <Header />
                 <ProcessTable
                     className="row"
                     processdata={data}
                     addProcess={addProcess}
                     editProcess={editProcess}
-                    deleteProcess={deleteProcess}
+                    removeProcess={removeProcess}
                 />
                 <ButtonBar
                     className="row"

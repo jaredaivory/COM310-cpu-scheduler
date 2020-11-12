@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react';
 
 import '../styles/processtable.css';
 
-const ProcessTable = ({
+/*
+    Process Table Component
+        Renders the table that contains the editable processes
+*/
+
+export default function ProcessTable({
     processdata: data,
     addProcess,
     editProcess,
-    deleteProcess,
-}) => {
+    removeProcess,
+}) {
+    // Returns the main JSX for the table
     return (
         <div className="container">
             <div className="card shadow-lg">
@@ -29,7 +35,7 @@ const ProcessTable = ({
                                         key={process.id}
                                         process={process}
                                         editProcess={editProcess}
-                                        deleteProcess={deleteProcess}
+                                        removeProcess={removeProcess}
                                     />
                                 ))}
                             </tbody>
@@ -50,9 +56,9 @@ const ProcessTable = ({
             </div>
         </div>
     );
-};
+}
 
-const TableRow = ({ process, editProcess, deleteProcess }) => {
+const TableRow = ({ process, editProcess, removeProcess }) => {
     //state management for the BurstTime and InsertTime input boxes
     const [bursttime, setBursttime] = useState(process.bursttime);
     const [insertion, setInsertion] = useState(process.insertion);
@@ -72,7 +78,8 @@ const TableRow = ({ process, editProcess, deleteProcess }) => {
         }
     }
 
-    //Function that is invoked whenever the variables defined in second argument, [arg1, arg2...] are altered.
+    // useEffect is triggered whenever there is a change in the arguments passed ()=> {function..., [arg0, arg1]}.
+    // used for responsiveneness whenever the bursttime or insertion time is changed
     useEffect(() => {
         process['bursttime'] = parseInt(bursttime);
         process['insertion'] = parseInt(insertion);
@@ -130,14 +137,12 @@ const TableRow = ({ process, editProcess, deleteProcess }) => {
                     </button>
                     <button
                         className="btn btn-danger"
-                        onClick={() => deleteProcess(process)}
+                        onClick={() => removeProcess(process)}
                     >
-                        Delete
+                        Remove
                     </button>
                 </div>
             </td>
         </tr>
     );
 };
-
-export default ProcessTable;
