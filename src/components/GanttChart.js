@@ -73,7 +73,8 @@ function GanttChartNode(node, index, array) {
                         className="text-center"
                         style={{ backgroundColor: process.color }}
                     >
-                        Process {process.name}
+                        {(node.process.id < 0 && 'System') || 'Process'}{' '}
+                        {process.name}
                     </div>
                     <div className="text-center">
                         Burst: {process.bursttime}ms
@@ -89,8 +90,10 @@ function GanttChartNode(node, index, array) {
 }
 
 function renderTable(ganttChart, waittimes, turnaroundtimes) {
-    console.log(waittimes);
-    console.log(turnaroundtimes);
+    // console.log('Waittimes', waittimes);
+    // console.log('turnaroundtimes', turnaroundtimes);
+
+    let filteredGanttChart = ganttChart.filter((node) => node.process.id > -1);
 
     function getAverage(array) {
         let total = array.reduce((acc, prev) => {
@@ -112,9 +115,9 @@ function renderTable(ganttChart, waittimes, turnaroundtimes) {
                     </tr>
                 </thead>
                 <tbody>
-                    {ganttChart.map((node, index) => {
+                    {filteredGanttChart.map((node, index) => {
                         return (
-                            <tr>
+                            <tr key={node.process.id}>
                                 <th
                                     scope="row"
                                     style={{
