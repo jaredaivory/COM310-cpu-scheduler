@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FirstComeFirstServe, ShortestJobFirst } from '../utils/algorithms';
 
 import '../styles/buttonbar.css';
@@ -10,30 +10,17 @@ import '../styles/buttonbar.css';
 
 export default function ButtonBar({ handleAlgorithmChange }) {
     const buttonOptions = [{ ...FirstComeFirstServe }, { ...ShortestJobFirst }];
-    const [selected, setSelected] = useState(buttonOptions[0].id);
 
     const renderRadioButton = (options) => {
         return (
-            <div className="form-check" key={options.id}>
-                <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value=""
-                    id={options.id}
-                    checked={options.id === selected ? true : false}
-                    onChange={handleSelection}
-                ></input>
-                <label className="form-check-label" htmlFor={options.id}>
-                    {options.name}
-                </label>
-            </div>
+            <option key={options.id} value={options.id} id={options.id}>
+                {options.name}
+            </option>
         );
     };
 
     const handleSelection = (e) => {
-        setSelected(e.target.id);
-
-        switch (e.target.id) {
+        switch (e.target.value) {
             case FirstComeFirstServe.id:
                 handleAlgorithmChange(FirstComeFirstServe);
                 break;
@@ -47,8 +34,13 @@ export default function ButtonBar({ handleAlgorithmChange }) {
 
     return (
         <div className="container buttonbar">
-            <div className="text-center">
-                {buttonOptions.map(renderRadioButton)}
+            <div className="row justify-content-center">
+                <select
+                    className="text-center custom-select custom-select-lg mb-3 col-sm-4 text-dark"
+                    onChange={handleSelection}
+                >
+                    {buttonOptions.map(renderRadioButton)}
+                </select>
             </div>
         </div>
     );

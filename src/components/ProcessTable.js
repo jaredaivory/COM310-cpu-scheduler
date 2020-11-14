@@ -105,7 +105,11 @@ const TableRow = ({ process, editProcess, removeProcess }) => {
                     onChange={(e) => handleChange(e)}
                 />
                 <div className="input-group-append">
-                    <span className="input-group-text" id="basic-addon2">
+                    <span
+                        onClick={() => clearValue(value)}
+                        className="input-group-text"
+                        id="basic-addon2"
+                    >
                         ms
                     </span>
                 </div>
@@ -117,6 +121,19 @@ const TableRow = ({ process, editProcess, removeProcess }) => {
     function randomizeValues() {
         setBursttime(Math.floor(Math.random() * 50));
         setInsertion(Math.floor(Math.random() * 50));
+    }
+
+    function clearValue(value) {
+        switch (value) {
+            case bursttime:
+                setBursttime(0);
+                break;
+            case insertion:
+                setInsertion(0);
+                break;
+            default:
+                break;
+        }
     }
 
     //Returns the main JSX element that each row in the table will have.
