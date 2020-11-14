@@ -1,6 +1,6 @@
 # SJC COM310 CPU Scheduling
 
-# ![Image of the application](https://i.imgur.com/dSZCY2P.png)
+# ![Image of the application](https://i.imgur.com/IIvJT4W.png)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
