@@ -10,6 +10,8 @@ function createWindow() {
         width: 800,
         height: 600,
         show: false,
+        title: 'CPU Scheduler',
+        icon: '/favicon.ico',
         useContentSize: true,
     });
     const startURL = isDev
@@ -21,6 +23,10 @@ function createWindow() {
     mainWindow.once('ready-to-show', () => mainWindow.show());
     mainWindow.on('closed', () => {
         mainWindow = null;
+    });
+
+    mainWindow.on('page-title-updated', (e) => {
+        e.preventDefault();
     });
 }
 app.on('ready', createWindow);

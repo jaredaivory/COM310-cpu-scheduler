@@ -13,16 +13,12 @@ export default function GanttChart({ processdata, algorithm }) {
         setGanttChart(algorithm.generateGanttChart(processdata));
     }, [processdata, algorithm]);
 
-    function getAverageTurnaroundTimes() {
-        let turnaroundtimes = algorithm.getTurnaroundTimes();
-        let total = turnaroundtimes.reduce((acc, t) => acc + t, 0);
-        return (total / turnaroundtimes.length).toFixed(2);
+    function getTurnaroundTimes() {
+        return algorithm.getTurnaroundTimes();
     }
 
-    function getAverageWaitTimes() {
-        const waittimes = algorithm.getWaitTimes();
-        let total = algorithm.getWaitTimes().reduce((acc, w) => acc + w, 0);
-        return (total / waittimes.length).toFixed(2);
+    function getWaitTimes() {
+        return algorithm.getWaitTimes();
     }
 
     // Returns the rendered JSX
@@ -35,12 +31,11 @@ export default function GanttChart({ processdata, algorithm }) {
                 <div className="card-body">
                     {renderGanttChart(ganttChart)}
                     <div className="row justify-content-center">
-                        <div className="col-md-4">
-                            Average Wait Time: {getAverageWaitTimes()}
-                        </div>
-                        <div className="col-md-4">
-                            Average Turnover Time: {getAverageTurnaroundTimes()}
-                        </div>
+                        {renderTable(
+                            ganttChart,
+                            getWaitTimes(),
+                            getTurnaroundTimes()
+                        )}
                     </div>
                 </div>
             </div>
@@ -67,8 +62,9 @@ function renderGanttChart(ganttChart) {
 }
 
 // Returns the divs that the chart will you in its render method
-function GanttChartNode(node) {
+function GanttChartNode(node, index, array) {
     const { process } = node;
+    let lastnode = index === array.length - 1;
     return (
         <div className="col-sm-2" key={process.id}>
             <div className="ganttchart-node">
@@ -77,7 +73,8 @@ function GanttChartNode(node) {
                         className="text-center"
                         style={{ backgroundColor: process.color }}
                     >
-                        Process {process.name}
+                        {(node.process.id < 0 && 'System') || 'Process'}{' '}
+                        {process.name}
                     </div>
                     <div className="text-center">
                         Burst: {process.bursttime}ms
@@ -86,7 +83,63 @@ function GanttChartNode(node) {
             </div>
             <div className="d-flex justify-content-between">
                 <div>{node.start}</div>
+                {lastnode && <div>{node.end}</div>}
             </div>
+        </div>
+    );
+}
+
+function renderTable(ganttChart, waittimes, turnaroundtimes) {
+    // console.log('Waittimes', waittimes);
+    // console.log('turnaroundtimes', turnaroundtimes);
+
+    let filteredGanttChart = ganttChart.filter((node) => node.process.id > -1);
+
+    function getAverage(array) {
+        let total = array.reduce((acc, prev) => {
+            return acc + prev;
+        }, 0);
+        return (total / array.length).toFixed(2);
+    }
+    return (
+        <div id="process-table" className="table-responsive">
+            <table
+                className="table table-bordered table-striped table-sm
+            "
+            >
+                <thead>
+                    <tr>
+                        <th scope="col">Process Name</th>
+                        <th scope="col">Wait Time</th>
+                        <th scope="col">Turnaround Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {filteredGanttChart.map((node, index) => {
+                        return (
+                            <tr key={node.process.id}>
+                                <th
+                                    scope="row"
+                                    style={{
+                                        backgroundColor: `${node.process.color}`,
+                                    }}
+                                >
+                                    Process {node.process.name}
+                                </th>
+                                <td>{waittimes[index]}</td>
+                                <td>{turnaroundtimes[index]}</td>
+                            </tr>
+                        );
+                    })}
+                    {
+                        <tr className="table-info">
+                            <th>Averages</th>
+                            <th>{getAverage(waittimes)}</th>
+                            <th>{getAverage(turnaroundtimes)}</th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     );
 }
