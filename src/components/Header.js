@@ -25,12 +25,17 @@ export default function Header() {
                     process from the table using the buttons.
                 </p>
                 <p className="p-2">
-                    These randomized values are between <strong>0ms</strong> and{' '}
-                    <strong>50ms</strong>
+                    These randomized values for burst time and insertion are
+                    between <strong>0ms</strong> and <strong>49ms</strong>
                 </p>
                 <p className="p-2">
                     The wait times and turnaround times are calculated and
                     displayed in the bottom most table.
+                </p>
+                <p className="p-2">
+                    Priority Queue: Larger value takes precedent. Randomized
+                    values are between <strong>0ms</strong> and{' '}
+                    <strong>9ms</strong>
                 </p>
             </div>
         </div>
