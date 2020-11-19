@@ -1,5 +1,9 @@
 import React from 'react';
-import { FirstComeFirstServe, ShortestJobFirst } from '../utils/algorithms';
+import {
+    FirstComeFirstServe,
+    ShortestJobFirst,
+    Priority,
+} from '../utils/algorithms';
 
 import '../styles/buttonbar.css';
 
@@ -9,7 +13,11 @@ import '../styles/buttonbar.css';
 */
 
 export default function ButtonBar({ handleAlgorithmChange }) {
-    const buttonOptions = [{ ...FirstComeFirstServe }, { ...ShortestJobFirst }];
+    const buttonOptions = [
+        { ...FirstComeFirstServe },
+        { ...ShortestJobFirst },
+        { ...Priority },
+    ];
 
     const renderRadioButton = (options) => {
         return (
@@ -26,6 +34,9 @@ export default function ButtonBar({ handleAlgorithmChange }) {
                 break;
             case ShortestJobFirst.id:
                 handleAlgorithmChange(ShortestJobFirst);
+                break;
+            case Priority.id:
+                handleAlgorithmChange(Priority);
                 break;
             default:
                 break;

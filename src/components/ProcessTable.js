@@ -12,6 +12,7 @@ export default function ProcessTable({
     addProcess,
     editProcess,
     removeProcess,
+    algorithm,
 }) {
     // Returns the main JSX for the table
     return (
@@ -23,9 +24,14 @@ export default function ProcessTable({
                         <table className="table table-bordered table-sm">
                             <thead>
                                 <tr>
-                                    <th scope="col">Process Name</th>
-                                    <th scope="col-5">Burst Time</th>
-                                    <th scope="col-5">Insertion</th>
+                                    <th scope="col-3">Process Name</th>
+                                    <th scope="col-3">Burst Time</th>
+                                    <th scope="col-3">Insertion</th>
+                                    {algorithm.id === 'priority' && (
+                                        <th scope="col-3" disabled>
+                                            Priority
+                                        </th>
+                                    )}
                                     <th></th>
                                 </tr>
                             </thead>
@@ -36,6 +42,7 @@ export default function ProcessTable({
                                         process={process}
                                         editProcess={editProcess}
                                         removeProcess={removeProcess}
+                                        algorithm={algorithm}
                                     />
                                 ))}
                             </tbody>
@@ -58,10 +65,11 @@ export default function ProcessTable({
     );
 }
 
-const TableRow = ({ process, editProcess, removeProcess }) => {
+const TableRow = ({ process, editProcess, removeProcess, algorithm }) => {
     //state management for the BurstTime and InsertTime input boxes
     const [bursttime, setBursttime] = useState(process.bursttime);
     const [insertion, setInsertion] = useState(process.insertion);
+    const [priority, setPriority] = useState(process.priority);
 
     // Event handler for input changes to the input boxes.
     // Needed to create a central point of truth or state in react projects.
@@ -73,6 +81,9 @@ const TableRow = ({ process, editProcess, removeProcess }) => {
             case 'Insertion':
                 setInsertion(event.target.value);
                 break;
+            case 'Priority':
+                setPriority(event.target.value);
+                break;
             default:
                 break;
         }
@@ -83,6 +94,7 @@ const TableRow = ({ process, editProcess, removeProcess }) => {
     useEffect(() => {
         process['bursttime'] = parseInt(bursttime);
         process['insertion'] = parseInt(insertion);
+        process['priority'] = parseInt(priority);
 
         editProcess({
             ...process,
@@ -90,10 +102,10 @@ const TableRow = ({ process, editProcess, removeProcess }) => {
 
         // This eslint-disable is here because the linter is seeing a potential recursion error.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [bursttime, insertion]);
+    }, [bursttime, insertion, priority]);
 
     //Returns the stylized input elements in JSX
-    function renderEditableValue(value, placeholder) {
+    function renderEditableValue(value, placeholder, unit) {
         return (
             <div className="input-group">
                 <input
@@ -110,7 +122,7 @@ const TableRow = ({ process, editProcess, removeProcess }) => {
                         className="input-group-text"
                         id="basic-addon2"
                     >
-                        ms
+                        {unit}
                     </span>
                 </div>
             </div>
@@ -121,6 +133,7 @@ const TableRow = ({ process, editProcess, removeProcess }) => {
     function randomizeValues() {
         setBursttime(Math.floor(Math.random() * 50));
         setInsertion(Math.floor(Math.random() * 50));
+        setPriority(Math.floor(Math.random() * 10));
     }
 
     function clearValue(value) {
@@ -130,6 +143,9 @@ const TableRow = ({ process, editProcess, removeProcess }) => {
                 break;
             case insertion:
                 setInsertion(0);
+                break;
+            case priority:
+                setPriority(0);
                 break;
             default:
                 break;
@@ -142,8 +158,12 @@ const TableRow = ({ process, editProcess, removeProcess }) => {
             <td style={{ backgroundColor: `${process.color}` }}>
                 Process {process.name}
             </td>
-            <td>{renderEditableValue(bursttime, 'Burst Time')}</td>
-            <td>{renderEditableValue(insertion, 'Insertion')}</td>
+            <td>{renderEditableValue(bursttime, 'Burst Time', 'ms')}</td>
+            <td>{renderEditableValue(insertion, 'Insertion', 'ms')}</td>
+            {algorithm.id === 'priority' && (
+                <td>{renderEditableValue(priority, 'Priority', '>')}</td>
+            )}
+
             <td>
                 <div className="btn-group">
                     <button

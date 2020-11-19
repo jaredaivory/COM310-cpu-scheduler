@@ -64,6 +64,7 @@ export default function App() {
                     addProcess={addProcess}
                     editProcess={editProcess}
                     removeProcess={removeProcess}
+                    algorithm={algorithm}
                 />
                 <ButtonBar
                     className="row"

@@ -49,6 +49,16 @@ class CPUAlgorithm {
         return turnaroundtimes;
     }
 
+    createGanttNode(start, process, bursttime, end) {
+        // Creates a node to be displayed on the gantt chart
+        return {
+            start: start,
+            process: process,
+            bursttime: bursttime,
+            end: end,
+        };
+    }
+
     createIdleProcess(starttime, timeidle, endtime) {
         // Return a ganttchart process for when the system is idle
         const idleProcess = {
@@ -58,12 +68,12 @@ class CPUAlgorithm {
             insertion: starttime,
             color: '#808080',
         };
-        const idleNode = {
-            start: starttime,
-            process: idleProcess,
-            bursttime: timeidle,
-            end: endtime,
-        };
+        const idleNode = this.createGanttNode(
+            starttime,
+            idleProcess,
+            timeidle,
+            endtime
+        );
         return idleNode;
     }
     //Sort the processes by the their insertion times
@@ -76,6 +86,12 @@ class CPUAlgorithm {
     sortProcessesByBurstTime(processes) {
         return [...processes].sort((p0, p1) =>
             p0.bursttime >= p1.bursttime ? 1 : -1
+        );
+    }
+    // Sort processes by their priority
+    sortProcessesByPriority(processes) {
+        return [...processes].sort((p0, p1) =>
+            p0.priority <= p1.priority ? 1 : -1
         );
     }
 }
@@ -107,10 +123,12 @@ const FCFS_algorithm = function generateGanttChart(processes) {
             );
             time += idlebursttime;
         }
-        let process = processArr[p];
+        let currProcess = processArr[p];
         let start = time;
-        let end = (time += process.bursttime);
-        ganttChart.push({ start, process, bursttime: process.bursttime, end });
+        let end = (time += currProcess.bursttime);
+        ganttChart.push(
+            this.createGanttNode(start, currProcess, currProcess.bursttime, end)
+        );
     }
     this.setGanttChart(ganttChart);
     return ganttChart;
@@ -165,12 +183,72 @@ const SJF_algorithm = function generateGanttChart(processes) {
             let start = time;
             let end = currProcess.bursttime + start;
             // push the process with the lowest bursttime to the ganttchart
-            ganttChart.push({
-                start: start,
-                process: currProcess,
-                bursttime: currProcess.bursttime,
-                end: end,
-            });
+            ganttChart.push(
+                this.createGanttNode(
+                    start,
+                    currProcess,
+                    currProcess.bursttime,
+                    end
+                )
+            );
+            time += currProcess.bursttime;
+        }
+    }
+    this.setGanttChart(ganttChart);
+    return ganttChart;
+};
+
+const Priority_algorithm = function generateGanttChart(processes) {
+    this.setProcesses(processes);
+    // Generate the GanttChart for Priority
+
+    // ProcessArr contains the processes ordered in the way they arrived into the waiting queue
+    const processArr = this.sortProcessesByInsertion([...processes]);
+
+    const ganttChart = [];
+    let waitingQueue = [];
+
+    // function to remove from process array and add to waitingQueue before given time
+    function addToWaitingQueue(time) {
+        let count = 0;
+        for (let p in processArr) {
+            if (processArr[p].insertion <= time) {
+                waitingQueue.push(processArr[p]);
+                count++;
+            }
+        }
+        processArr.splice(0, count);
+    }
+
+    let time = 0;
+    // Loop until all processes are added to the gantt chart
+    while (processArr.length !== 0 || waitingQueue.length !== 0) {
+        addToWaitingQueue(time);
+        waitingQueue = this.sortProcessesByPriority(waitingQueue); //Sort the queue
+        if (waitingQueue.length === 0) {
+            let idlebursttime = processArr[0].insertion - time;
+            ganttChart.push(
+                this.createIdleProcess(
+                    time,
+                    idlebursttime,
+                    time + idlebursttime
+                )
+            );
+            time += idlebursttime;
+        } else {
+            let currProcess = waitingQueue.shift();
+
+            let start = time;
+            let end = currProcess.bursttime + start;
+            // push the process with the lowest bursttime to the ganttchart
+            ganttChart.push(
+                this.createGanttNode(
+                    start,
+                    currProcess,
+                    currProcess.bursttime,
+                    end
+                )
+            );
             time += currProcess.bursttime;
         }
     }
@@ -189,6 +267,8 @@ const ShortestJobFirst = new CPUAlgorithm(
     SJF_algorithm
 );
 
+const Priority = new CPUAlgorithm('priority', 'Priority', Priority_algorithm);
+
 const Algorithms = {
     description:
         'An assortment of algorithms used for the creation of Gantt Charts',
@@ -196,6 +276,7 @@ const Algorithms = {
 
 Algorithms.FirstComeFirstServe = FirstComeFirstServe;
 Algorithms.ShortestJobFirst = ShortestJobFirst;
+Algorithms.Priority = Priority;
 
-export { FirstComeFirstServe, ShortestJobFirst };
+export { FirstComeFirstServe, ShortestJobFirst, Priority };
 export default Algorithms;
